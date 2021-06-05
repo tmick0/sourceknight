@@ -1,0 +1,4 @@
+
+class skerror (RuntimeError):
+    pass
+

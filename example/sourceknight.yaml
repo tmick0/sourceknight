@@ -1,0 +1,23 @@
+project:
+  name: myplugin-example
+  dependencies:
+    - name: sourcemod
+      type: tar
+      version: 1.10.0-git6503
+      location: https://sm.alliedmods.net/smdrop/1.10/sourcemod-1.10.0-git6503-linux.tar.gz
+      unpack:
+      - source: /addons
+        dest: /addons
+    - name: sourcecolors
+      type: git
+      repo: https://github.com/Ilusion9/sourcecolors-inc-sm
+      unpack:
+      - source: /include
+        dest: /addons/sourcemod/scripting/include
+    - name: extend-map
+      type: git
+      git: https://github.com/Ilusion9/extend-map-sm
+      unpack:
+      - source: /scripting
+      - dest: /addons/sourcemod/scripting
+  root: /myplugin
