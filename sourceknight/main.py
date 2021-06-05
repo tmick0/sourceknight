@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+from .context import context
 from .update import update
 from .errors import skerror
 
@@ -19,16 +20,13 @@ def main():
         'update': update
     }
 
-    context_args = [args.path]
-
     try:
         try:
             command = command_map[args.command]
         except KeyError as e:
             raise skerror("Unknown command {:s}".format(args.command))
-
-        command(args.path)(args)
-
+        with context(args.path) as ctx:
+            command(ctx)(args)
     except skerror as e:
         print(e)
         sys.exit(1)
