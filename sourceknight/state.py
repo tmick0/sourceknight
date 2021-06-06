@@ -3,6 +3,7 @@ class state (object):
     def __init__(self, defs):
         self._dict = {}
         self._dict['project'] = defs
+        self._dict['dependencies'] = {}
         self._clean = True
     
     def clean(self):
