@@ -1,6 +1,5 @@
 import os
 import yaml
-import pathlib
 
 try:
     from yaml import CLoader as yamlLoader
@@ -11,6 +10,7 @@ except:
 
 from .errors import skerror
 from .state import state
+from .utils import ensure_path_exists
 
 class context (object):
     def __init__(self, path):
@@ -19,7 +19,7 @@ class context (object):
 
     def ensure_working_directory_exists(self):
         if not self._exists:
-            pathlib.Path(os.path.join(self._path, '.sourceknight')).mkdir(parents=True, exist_ok=True)
+            ensure_path_exists(os.path.join(self._path, '.sourceknight'))
             self._exists = True
 
     def __enter__(self):

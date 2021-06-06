@@ -1,5 +1,6 @@
 
 from .drivers import tardriver, gitdriver, filedriver
+import logging
 
 class dependency (object):
     def __init__(self):
@@ -39,7 +40,7 @@ class depmgr (object):
         except KeyError:
             pass
 
-        driver = drivers_by_name[new_model.type](**new_model.params)
+        driver = drivers_by_name[new_model.type](self._ctx, new_model)
         if current_model is None:
             force = True
 
@@ -52,4 +53,5 @@ class depmgr (object):
                 force = True
 
         if force:
+            logging.info("Updating `{}`".format(new_model.name))
             driver.update()

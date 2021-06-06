@@ -1,4 +1,5 @@
 from .base import basedriver
 
 class gitdriver (basedriver):
-    pass
+    def __init__(self, ctx, model):
+        print(model.params)

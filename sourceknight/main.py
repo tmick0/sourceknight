@@ -1,11 +1,14 @@
 import argparse
 import sys
+import logging
 
 from .context import context
 from .update import update
 from .errors import skerror
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
     parser = argparse.ArgumentParser("sourceknight", description="simple dependency manager for sourcemod projects")
     parser.add_argument('-p,--path', dest="path", help="Path to the root of your project (directory containing sourceknight.yaml) - defaults to current directory", default=".")
 
