@@ -41,10 +41,9 @@ class context (object):
             path = os.path.join(self._path, '.sourceknight', 'state.yaml')
             with open(path, 'r') as fh:
                 self._state = state.from_yaml(self._defs, yaml.load(fh, Loader=yamlLoader))
-            self._state.update(definitions=self._defs)
             self._exists = True
         except OSError:
-            self._state = state(self._defs)
+            self._state = state()
         except yaml.YAMLError as e:
             raise skerror("sourceknight state is corrupted, try removing the .sourceknight directory")\
 

@@ -2,6 +2,7 @@ from .base import basedriver
 from ..utils import filemgr
 
 import logging
+import os
 
 
 class tardriver (basedriver):
@@ -9,10 +10,12 @@ class tardriver (basedriver):
         self._ctx = ctx
         self._model = model
 
-    def update(self):
-        with filemgr(self._ctx) as mgr:
-            path = mgr.acquire(self._model.params['location'])
-            print(path)
-            with open(path, 'rb') as fh:
-                print(len(fh.read()))
-            
+    def cleanup(self):
+        os.unlink(self._model['location'])
+
+    def update(self, mgr):
+        path = mgr.acquire(self._model.params['location'])
+        mgr.release(path)
+        self._ctx._state.update(dependencies={
+            self._model.name: self._model.state(location=os.path.relpath(path, self._ctx._path), driver='tar')
+        })

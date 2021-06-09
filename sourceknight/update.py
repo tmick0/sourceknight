@@ -1,5 +1,6 @@
 
 from .dependencies import depmgr
+from .utils import filemgr
 
 class update (object):
     def __init__(self, context):
@@ -7,6 +8,7 @@ class update (object):
 
     def __call__(self, args):
         self._ctx.ensure_working_directory_exists()
-        mgr = depmgr(self._ctx)
-        for dep in self._ctx._defs['project']['dependencies']:
-            mgr.update(dep, args.force)
+        dmgr = depmgr(self._ctx)
+        with filemgr(self._ctx, "cache") as fmgr:
+            for dep in self._ctx._defs['project']['dependencies']:
+                dmgr.update(dep, fmgr, args.force)

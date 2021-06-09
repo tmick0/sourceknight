@@ -57,12 +57,12 @@ def ensure_path_exists(p):
 
 
 class filemgr (object):
-    def __init__(self, ctx):
+    def __init__(self, ctx, directory="download"):
         self._ctx = ctx
         self._sess = requests.session()
         self._sess.mount("file://", LocalFileAdapter)
         self._tmpfiles = []
-        self._path = os.path.join(self._ctx._path, '.sourceknight', 'download')
+        self._path = os.path.join(self._ctx._path, '.sourceknight', directory)
         mimetypes.init()
 
     def __enter__(self):
@@ -75,6 +75,9 @@ class filemgr (object):
                 os.unlink(f)
             except OSError:
                 pass
+
+    def release(self, file):
+        self._tmpfiles.remove(file)
 
     def acquire(self, url):
         logging.info(" Downloading {}...".format(url))

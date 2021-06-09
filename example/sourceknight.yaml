@@ -16,7 +16,7 @@ project:
         dest: /addons/sourcemod/scripting/include
     - name: extend-map
       type: git
-      git: https://github.com/Ilusion9/extend-map-sm
+      repo: https://github.com/Ilusion9/extend-map-sm
       unpack:
       - source: /scripting
       - dest: /addons/sourcemod/scripting

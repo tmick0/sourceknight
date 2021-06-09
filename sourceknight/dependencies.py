@@ -9,6 +9,14 @@ class dependency (object):
         self.version = None
         self.params = {}
 
+    def state(self, **kwargs):
+        d = {
+            'name': self.name,
+            'version': self.version
+        }
+        d.update(kwargs)
+        return d
+
     @classmethod
     def from_yaml(cls, data):
         o = cls()
@@ -32,7 +40,7 @@ class depmgr (object):
     def __init__(self, ctx):
         self._ctx = ctx
 
-    def update(self, dep, force=False):
+    def update(self, dep, fmgr, force=False):
         new_model = dependency.from_yaml(dep)
         current_model = None
         try:
@@ -41,17 +49,11 @@ class depmgr (object):
             pass
 
         driver = drivers_by_name[new_model.type](self._ctx, new_model)
-        if current_model is None:
-            force = True
 
-        if current_model is None:
-            force = True
+        if force or driver.check_update(current_model):
+            logging.info("Updating: {}".format(new_model.name))
+            if current_model is not None:
+                drivers_by_name[current_model.params['driver']](self._ctx, current_model).cleanup()
+            driver.update(fmgr)
         else:
-            if current_model.version is not None and current_model.version != new_model.version:
-                force = True
-            elif driver.check_update(current_model):
-                force = True
-
-        if force:
-            logging.info("Updating `{}`".format(new_model.name))
-            driver.update()
+            logging.info("Already up to date: {}".format(new_model.name))
