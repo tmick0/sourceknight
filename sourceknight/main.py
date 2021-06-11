@@ -5,6 +5,7 @@ import logging
 from .context import context
 from .update import update
 from .status import status
+from .unpack import unpack
 from .errors import skerror
 
 def main():
@@ -17,12 +18,14 @@ def main():
     subparsers.required = True
     update.install(subparsers)
     status.install(subparsers)
+    unpack.install(subparsers)
 
     args = parser.parse_args()
 
     command_map = {
         'update': update,
         'status': status,
+        'unpack': unpack
     }
 
     try:

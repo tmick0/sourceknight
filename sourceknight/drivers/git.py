@@ -3,6 +3,7 @@ from .base import basedriver
 import git
 import os
 import logging
+import shutil
 
 from ..utils import ensure_path_exists
 
@@ -32,3 +33,20 @@ class gitdriver (basedriver):
             self._model.name: self._model.state(location=os.path.relpath(loc, self._ctx._path), driver='git')
         })
 
+    def unpack(self, mgr, locations):
+        for l in locations:
+            if l['source'][0] == '/':
+                l['source'] = l['source'][1:]
+            if l['dest'][0] == '/':
+                l['dest'] = l['dest'][1:]
+            print(" Extracting {} to {}".format(l['source'], l['dest']))
+            src = os.path.join(self._ctx._path, self._model.params['location'], l['source'])
+            dst = os.path.join(mgr._path, l['dest'])
+            if os.path.isdir(src):
+                ensure_path_exists(dst)
+            else:
+                ensure_path_exists(os.path.dirname(dst))
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        self._ctx._state.update(build={
+            self._model.name: self._model.state(driver='git')
+        })

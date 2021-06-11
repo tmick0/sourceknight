@@ -16,5 +16,8 @@ class basedriver (object):
     def update(self, fmgr):
         raise NotImplementedError()
 
+    def unpack(self, fmgr, locations):
+        raise NotImplementedError()
+
     def cleanup(self):
         pass

@@ -12,12 +12,19 @@ class status (object):
 
     def __call__(self, args):
         for dep in map(dependency.from_yaml, self._ctx._defs['project']['dependencies']):
-            d = dependency.from_yaml(self._ctx._state.dependencies[dep.name])
+            cache = dependency()
+            build = dependency()
+            if dep.name in self._ctx._state.dependencies:
+                cache = dependency.from_yaml(self._ctx._state.dependencies[dep.name])
+            if dep.name in self._ctx._state.build:
+                build = dependency.from_yaml(self._ctx._state.build[dep.name])
             print(dep.name)
-            if d.version is not None:
-                print(" Installed version: {:s}".format(d.version))
+            if cache.version is not None:
+                print(" Cached version: {:s}".format(cache.version))
+            if build.version is not None:
+                print(" Unpacked version: {:s}".format(build.version))
             if args.verbose:
                 print(" Additional parameters:")
-                for k, v in d.params.items():
+                for k, v in cache.params.items():
                     print("  {:s} = {:s}".format(k,v))
 

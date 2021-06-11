@@ -5,6 +5,7 @@ import pathlib
 import uuid
 import mimetypes
 import logging
+import shutil
 
 from urllib.request import url2pathname
 
@@ -57,12 +58,13 @@ def ensure_path_exists(p):
 
 
 class filemgr (object):
-    def __init__(self, ctx, directory="download"):
+    def __init__(self, ctx, directory, entire_directory=False):
         self._ctx = ctx
         self._sess = requests.session()
         self._sess.mount("file://", LocalFileAdapter)
         self._tmpfiles = []
         self._path = os.path.join(self._ctx._path, '.sourceknight', directory)
+        self._entire_dir = entire_directory
         mimetypes.init()
 
     def __enter__(self):
@@ -75,6 +77,11 @@ class filemgr (object):
                 os.unlink(f)
             except OSError:
                 pass
+        if self._entire_dir:
+            shutil.rmtree(self._path)
+
+    def release_dir(self):
+        self._entire_dir = False
 
     def release(self, file):
         self._tmpfiles.remove(file)

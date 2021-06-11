@@ -40,6 +40,30 @@ class depmgr (object):
     def __init__(self, ctx):
         self._ctx = ctx
 
+    def unpack(self, dep, locations, fmgr, force=False):
+        d = dependency.from_yaml(dep)
+        current_model = None
+        try:
+            current_model = dependency.from_yaml(self._ctx._state.build[d.name])
+        except KeyError:
+            pass
+
+        unpack = False
+        if force:
+            unpack = True
+        elif d.version is None:
+            unpack = True
+        elif current_model is None:
+            unpack = True
+        elif d.version != current_model.version:
+            unpack = True
+        
+        if unpack:
+            print("Unpacking {:s}...".format(d.name))
+            drivers_by_name[d.params['driver']](self._ctx, d).unpack(fmgr, locations)
+        else:
+            logging.info("Already up to date: {}".format(d.name))
+
     def update(self, dep, fmgr, force=False):
         new_model = dependency.from_yaml(dep)
         current_model = None

@@ -19,5 +19,5 @@ project:
       repo: https://github.com/Ilusion9/extend-map-sm
       unpack:
       - source: /scripting
-      - dest: /addons/sourcemod/scripting
+        dest: /addons/sourcemod/scripting
   root: /myplugin
