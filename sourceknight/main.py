@@ -4,6 +4,7 @@ import logging
 
 from .context import context
 from .update import update
+from .status import status
 from .errors import skerror
 
 def main():
@@ -14,13 +15,14 @@ def main():
 
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
-    update_parser = subparsers.add_parser('update', help='Fetch or update dependencies')
-    update_parser.add_argument('-f,--force', dest='force', action='store_true', help="Force updating all dependencies, even if they are believed to be up to date")
+    update.install(subparsers)
+    status.install(subparsers)
 
     args = parser.parse_args()
 
     command_map = {
-        'update': update
+        'update': update,
+        'status': status,
     }
 
     try:
