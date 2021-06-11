@@ -11,7 +11,7 @@ class tardriver (basedriver):
         self._model = model
 
     def cleanup(self):
-        os.unlink(self._model['location'])
+        os.unlink(os.path.join(self._ctx._path, self._model.params['location']))
 
     def update(self, mgr):
         path = mgr.acquire(self._model.params['location'])
