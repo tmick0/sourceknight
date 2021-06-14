@@ -27,4 +27,3 @@ class status (object):
                 print(" Additional parameters:")
                 for k, v in cache.params.items():
                     print("  {:s} = {:s}".format(k,v))
-

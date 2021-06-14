@@ -103,3 +103,13 @@ class filemgr (object):
             fh.write(req.content)
 
         return tmp
+
+
+class cd (object):
+    def __init__(self, path):
+        self._path = path
+    def __enter__(self):
+        self._prev = os.getcwd()
+        os.chdir(self._path)
+    def __exit__(self, *exc):
+        os.chdir(self._prev)

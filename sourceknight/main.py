@@ -6,6 +6,7 @@ from .context import context
 from .update import update
 from .status import status
 from .unpack import unpack
+from .compile import compile
 from .errors import skerror
 
 def main():
@@ -19,13 +20,15 @@ def main():
     update.install(subparsers)
     status.install(subparsers)
     unpack.install(subparsers)
+    compile.install(subparsers)
 
     args = parser.parse_args()
 
     command_map = {
         'update': update,
         'status': status,
-        'unpack': unpack
+        'unpack': unpack,
+        'compile': compile
     }
 
     try:

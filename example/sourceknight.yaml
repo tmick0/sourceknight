@@ -21,3 +21,9 @@ project:
       - source: /scripting
         dest: /addons/sourcemod/scripting
   root: /myplugin
+  # optional overrides (with defaults):
+  # compiler: /addons/sourcemod/scripting/spcomp
+  # workdir: /addons/sourcemod/scripting
+  targets:
+    - extendmap
+    - example
