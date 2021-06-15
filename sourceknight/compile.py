@@ -67,6 +67,6 @@ class compile (object):
             ensure_path_exists(outdir)
             for t in targets:
                 infile = '{:s}.sp'.format(t)
-                outfile = os.path.join(outdir, '{:s}.spx'.format(t))
+                outfile = os.path.join(outdir, '{:s}.smx'.format(t))
                 logging.info("Building {}...".format(t))
                 subprocess.run([compiler, infile, "-o{}".format(outfile)])
