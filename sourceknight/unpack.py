@@ -23,6 +23,8 @@ class unpack (object):
         if args.clean:
             d = os.path.join(self._ctx._path, '.sourceknight', 'build')
             print("Deleting existing build directory ({:s})...".format(d))
+            for k in list(self._ctx._state.build):
+                del self._ctx._state.build[k]
             shutil.rmtree(d)
 
         dmgr = depmgr(self._ctx)
