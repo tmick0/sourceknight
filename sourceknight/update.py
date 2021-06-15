@@ -8,8 +8,11 @@ class update (object):
 
     @classmethod
     def install(cls, subparsers):
-        update_parser = subparsers.add_parser('update', help='Fetch or update dependencies')
-        update_parser.add_argument('-f,--force', dest='force', action='store_true', help="Force updating all dependencies, even if they are believed to be up to date")
+        return subparsers.add_parser('update', help='Fetch or update dependencies')
+
+    @classmethod
+    def add_args(cls, parser):
+        parser.add_argument('-f,--force', dest='force', action='store_true', help="Force updating all dependencies, even if they are believed to be up to date")
 
     def __call__(self, args):
         self._ctx.ensure_working_directory_exists()

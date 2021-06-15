@@ -15,7 +15,10 @@ class compile (object):
 
     @classmethod
     def install(cls, subparsers):
-        parser = subparsers.add_parser('compile', help='Runs the build steps specified in the configuration')
+        return subparsers.add_parser('compile', help='Runs the build steps specified in the configuration')
+    
+    @classmethod
+    def add_args(cls, parser):
         parser.add_argument('-o,--output-dir', dest='output', default='.', help='Specify directory to store compiled smx files (default current directory)')
         parser.add_argument('targets', nargs='*', help='List of specific targets to compile (by default, will compile all)')
 

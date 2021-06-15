@@ -7,6 +7,7 @@ from .update import update
 from .status import status
 from .unpack import unpack
 from .compile import compile
+from .build import build
 from .errors import skerror
 
 def main():
@@ -17,10 +18,12 @@ def main():
 
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
-    update.install(subparsers)
-    status.install(subparsers)
-    unpack.install(subparsers)
-    compile.install(subparsers)
+
+    update.add_args(update.install(subparsers))
+    status.add_args(status.install(subparsers))
+    unpack.add_args(unpack.install(subparsers))
+    compile.add_args(compile.install(subparsers))
+    build.add_args(build.install(subparsers))
 
     args = parser.parse_args()
 
@@ -28,7 +31,8 @@ def main():
         'update': update,
         'status': status,
         'unpack': unpack,
-        'compile': compile
+        'compile': compile,
+        'build': build
     }
 
     try:

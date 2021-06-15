@@ -10,8 +10,11 @@ class unpack (object):
 
     @classmethod
     def install(cls, subparsers):
-        parser = subparsers.add_parser('unpack', help='Unpack dependencies into build directory')
-        parser.add_argument('-f,--force', dest='force', action='store_true', help="Force unpacking all dependencies, even if they have not been updated")
+        return subparsers.add_parser('unpack', help='Unpack dependencies into build directory')
+    
+    @classmethod
+    def add_args(cls, parser):
+        parser.add_argument('-a,--all', dest='force', action='store_true', help="Force unpacking all dependencies, even if they have not been updated")
         parser.add_argument('-c,--clean', dest='clean', action='store_true', help="Force creating a new unpack directory, even if one already exists")
 
     def __call__(self, args):

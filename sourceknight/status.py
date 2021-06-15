@@ -7,7 +7,10 @@ class status (object):
 
     @classmethod
     def install(cls, subparsers):
-        parser = subparsers.add_parser('status', help='Print status of dependencies')
+        return subparsers.add_parser('status', help='Print status of dependencies')
+    
+    @classmethod
+    def add_args(cls, parser):
         parser.add_argument('-v,--verbose', dest='verbose', action='store_true', help="Print additional information")
 
     def __call__(self, args):
