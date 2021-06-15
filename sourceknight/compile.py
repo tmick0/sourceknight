@@ -5,6 +5,7 @@ from .errors import skerror
 import os
 import shutil
 import subprocess
+import logging
 
 class compile (object):
     _default_compiler = "/addons/sourcemod/scripting/spcomp"
@@ -59,7 +60,7 @@ class compile (object):
         outdir = os.path.relpath(os.path.abspath(args.output), workdir)
 
         if root is not None:
-            print("Copying sources...")
+            logging.info("Copying sources...")
             shutil.copytree(os.path.join(self._ctx._path, root), buildroot, dirs_exist_ok=True)
 
         with cd(workdir):
@@ -67,5 +68,5 @@ class compile (object):
             for t in targets:
                 infile = '{:s}.sp'.format(t)
                 outfile = os.path.join(outdir, '{:s}.spx'.format(t))
-                print("Building {}...".format(t))
+                logging.info("Building {}...".format(t))
                 subprocess.run([compiler, infile, "-o{}".format(outfile)])

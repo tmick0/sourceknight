@@ -3,6 +3,7 @@ from .dependencies import depmgr
 from .utils import filemgr
 import os
 import shutil
+import logging
 
 class unpack (object):
     def __init__(self, context):
@@ -22,7 +23,7 @@ class unpack (object):
 
         if args.clean:
             d = os.path.join(self._ctx._path, '.sourceknight', 'build')
-            print("Deleting existing build directory ({:s})...".format(d))
+            logging.info("Deleting existing build directory ({:s})...".format(d))
             for k in list(self._ctx._state.build):
                 del self._ctx._state.build[k]
             shutil.rmtree(d)
@@ -34,5 +35,5 @@ class unpack (object):
                     dmgr.unpack(self._ctx._state.dependencies[dep['name']], dep['unpack'], fmgr, args.force)
                 fmgr.release_dir()
             except:
-                print("Error occurred during unpack, removing build tree...")
+                logging.info("Error occurred during unpack, removing build tree...")
                 raise

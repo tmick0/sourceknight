@@ -26,14 +26,14 @@ class tardriver (basedriver):
     def unpack(self, mgr, locations):
         with filemgr(self._ctx, uuid.uuid4().hex, True) as tmp:
             with tarfile.open(os.path.join(self._ctx._path, self._model.params['location'])) as tar:
-                print(" Unpacking archive...")
+                logging.info(" Unpacking archive...")
                 tar.extractall(tmp._path)
             for l in locations:
                 if l['source'][0] == '/':
                     l['source'] = l['source'][1:]
                 if l['dest'][0] == '/':
                     l['dest'] = l['dest'][1:]
-                print(" Extracting {} to {}".format(l['source'], l['dest']))
+                logging.info(" Extracting {} to {}".format(l['source'], l['dest']))
                 src = os.path.join(tmp._path, l['source'])
                 dst = os.path.join(mgr._path, l['dest'])
                 if os.path.isdir(src):

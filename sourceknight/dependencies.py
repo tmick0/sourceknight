@@ -59,7 +59,7 @@ class depmgr (object):
             unpack = True
         
         if unpack:
-            print("Unpacking {:s}...".format(d.name))
+            logging.info("Unpacking {:s}...".format(d.name))
             drivers_by_name[d.params['driver']](self._ctx, d).unpack(fmgr, locations)
         else:
             logging.info("Already up to date: {}".format(d.name))

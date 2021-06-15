@@ -39,7 +39,7 @@ class gitdriver (basedriver):
                 l['source'] = l['source'][1:]
             if l['dest'][0] == '/':
                 l['dest'] = l['dest'][1:]
-            print(" Extracting {} to {}".format(l['source'], l['dest']))
+            logging.info(" Extracting {} to {}".format(l['source'], l['dest']))
             src = os.path.join(self._ctx._path, self._model.params['location'], l['source'])
             dst = os.path.join(mgr._path, l['dest'])
             if os.path.isdir(src):

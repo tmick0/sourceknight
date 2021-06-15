@@ -1,6 +1,8 @@
 
 from .dependencies import dependency
 
+import logging
+
 class status (object):
     def __init__(self, context):
         self._ctx = context
@@ -21,12 +23,12 @@ class status (object):
                 cache = dependency.from_yaml(self._ctx._state.dependencies[dep.name])
             if dep.name in self._ctx._state.build:
                 build = dependency.from_yaml(self._ctx._state.build[dep.name])
-            print(dep.name)
+            logging.info(dep.name)
             if cache.version is not None:
-                print(" Cached version: {:s}".format(cache.version))
+                logging.info(" Cached version: {:s}".format(cache.version))
             if build.version is not None:
-                print(" Unpacked version: {:s}".format(build.version))
+                logging.info(" Unpacked version: {:s}".format(build.version))
             if args.verbose:
-                print(" Additional parameters:")
+                logging.info(" Additional parameters:")
                 for k, v in cache.params.items():
-                    print("  {:s} = {:s}".format(k,v))
+                    logging.info("  {:s} = {:s}".format(k,v))

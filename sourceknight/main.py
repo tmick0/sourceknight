@@ -43,7 +43,7 @@ def main():
         with context(args.path) as ctx:
             command(ctx)(args)
     except skerror as e:
-        print(e)
+        logging.error(e)
         sys.exit(1)
 
     sys.exit(0)
