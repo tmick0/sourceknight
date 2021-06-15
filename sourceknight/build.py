@@ -13,7 +13,7 @@ class build (object):
 
     @classmethod
     def install(cls, subparsers):
-        return subparsers.add_parser('build', help='Equivalent to running update, unpack, build')
+        return subparsers.add_parser('build', help='Equivalent to running update, unpack, compile')
     
     @classmethod
     def add_args(cls, parser):
