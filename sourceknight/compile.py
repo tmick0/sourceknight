@@ -61,7 +61,11 @@ class compile (object):
 
         if root is not None:
             logging.info("Copying sources...")
-            shutil.copytree(os.path.join(self._ctx._path, root), buildroot, dirs_exist_ok=True)
+            def copy_filter(arg1, arg2):
+                if '.sourceknight' in arg2:
+                    return ['.sourceknight']
+                return []
+            shutil.copytree(os.path.join(self._ctx._path, root), buildroot, dirs_exist_ok=True, ignore=copy_filter)
 
         with cd(workdir):
             ensure_path_exists(outdir)
