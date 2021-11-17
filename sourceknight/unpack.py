@@ -26,7 +26,10 @@ class unpack (object):
             logging.info("Deleting existing build directory ({:s})...".format(d))
             for k in list(self._ctx._state.build):
                 del self._ctx._state.build[k]
-            shutil.rmtree(d)
+            try:
+                shutil.rmtree(d)
+            except FileNotFoundError:
+                pass
 
         dmgr = depmgr(self._ctx)
         with filemgr(self._ctx, "build", True) as fmgr:
