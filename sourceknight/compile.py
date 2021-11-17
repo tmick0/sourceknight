@@ -6,9 +6,13 @@ import os
 import shutil
 import subprocess
 import logging
+import platform
 
 class compile (object):
-    _default_compiler = "/addons/sourcemod/scripting/spcomp"
+    if platform.architecture()[0] == '64bit':
+        _default_compiler = "/addons/sourcemod/scripting/spcomp64"
+    else:
+        _default_compiler = "/addons/sourcemod/scripting/spcomp"
     _default_workdir = "/addons/sourcemod/scripting/"
 
     def __init__(self, context):
