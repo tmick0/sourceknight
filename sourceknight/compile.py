@@ -24,7 +24,7 @@ class compile (object):
     
     @classmethod
     def add_args(cls, parser):
-        parser.add_argument('-o,--output-dir', dest='output', default='.', help='Specify directory to store compiled smx files (default current directory)')
+        parser.add_argument('-o,--output-dir', dest='output', default=None, help='Specify directory to store compiled smx files (default from manifest, or current directory if not specified)')
         parser.add_argument('targets', nargs='*', help='List of specific targets to compile (by default, will compile all)')
 
     def __call__(self, args):
@@ -58,10 +58,20 @@ class compile (object):
         except KeyError:
             root = None
 
+        output = args.output
+        if output is None:
+            output = '.'
+            try:
+                output = self._ctx._defs['project']['output']
+                if output[0] == '/':
+                    output = output[1:]
+            except KeyError:
+                pass
+
         buildroot = os.path.join(self._ctx._path, '.sourceknight', 'build')
         workdir = os.path.join(buildroot, workdir)
         compiler = os.path.abspath(os.path.join(buildroot, compiler))
-        outdir = os.path.relpath(os.path.abspath(args.output), workdir)
+        outdir = os.path.relpath(os.path.abspath(output), workdir)
 
         if root is not None:
             logging.info("Copying sources...")

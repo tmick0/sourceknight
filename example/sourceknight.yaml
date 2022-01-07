@@ -24,6 +24,7 @@ project:
   # optional overrides (with defaults):
   # compiler: /addons/sourcemod/scripting/spcomp
   # workdir: /addons/sourcemod/scripting
+  # output: .
   targets:
     - extendmap
     - example
