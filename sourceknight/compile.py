@@ -76,7 +76,7 @@ class compile (object):
         if root is not None:
             logging.info("Copying sources...")
             def copy_filter(directory, contents):
-                return filter(lambda c: c[0] == '.', contents)
+                return list(filter(lambda c: c[0] == '.', contents))
             shutil.copytree(os.path.join(self._ctx._path, root), buildroot, dirs_exist_ok=True, ignore=copy_filter)
 
         with cd(workdir):
