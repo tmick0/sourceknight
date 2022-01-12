@@ -44,9 +44,10 @@ class gitdriver (basedriver):
             dst = os.path.join(mgr._path, l['dest'])
             if os.path.isdir(src):
                 ensure_path_exists(dst)
+                shutil.copytree(src, dst, dirs_exist_ok=True)
             else:
                 ensure_path_exists(os.path.dirname(dst))
-            shutil.copytree(src, dst, dirs_exist_ok=True)
+                shutil.copyfile(src, dst)
         self._ctx._state.update(build={
             self._model.name: self._model.state(driver='git')
         })
