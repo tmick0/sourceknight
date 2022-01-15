@@ -1,3 +1,4 @@
+from re import L
 import requests
 import urllib
 import os
@@ -6,7 +7,10 @@ import uuid
 import mimetypes
 import logging
 import shutil
+import logging
+import semver
 
+from importlib.metadata import version
 from urllib.request import url2pathname
 
 
@@ -113,3 +117,55 @@ class cd (object):
         os.chdir(self._path)
     def __exit__(self, *exc):
         os.chdir(self._prev)
+
+
+def once(fn):
+    fn._already_run = False
+    fn._last_res = None
+    def wrapped(*args, **kwargs):
+        if fn._already_run:
+            return fn._last_res
+        fn._last_res = fn(*args, **kwargs)
+        return fn._last_res
+    return wrapped
+
+
+class skversion (object):
+
+    class compat (object):
+        major = False
+        newer = False
+
+    def __init__(self, v):
+        v = str(v)
+        self.major, self.minor = map(int, v.split('.', 2))
+    
+    def compatibility(self, other):
+        res = skversion.compat()
+        if self.major != other.major:
+            res.major = True
+        elif self.minor < other.minor:
+            res.newer = True
+        return res
+
+    def __str__(self):
+        return "{:d}.{:d}".format(self.major, self.minor)
+
+
+@once
+def check_version(defs):
+    try:
+        ver = defs['project']['sourceknight']
+    except KeyError:
+        logging.warning("No version detected in manifest, defaulting to 0.1. In the future, a version will be required in the manifest.")
+        ver = "0.1"
+    ver = skversion(ver)
+    cur = skversion(version('sourceknight'))
+    err = RuntimeError("this version of sourceknight is incompatible with this manifest")
+    compat = cur.compatibility(ver)
+    if compat.major:
+        logging.error("This manifest is from a different major version of sourceknight than what is currently installed ({} vs {})".format(ver, cur))
+        raise err
+    if compat.newer:
+        logging.error("This manifest requires a newer version of sourceknight than is currently installed ({} vs {})".format(ver, cur))
+        raise err

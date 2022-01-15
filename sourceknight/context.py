@@ -10,7 +10,7 @@ except:
 
 from .errors import skerror
 from .state import state
-from .utils import ensure_path_exists
+from .utils import ensure_path_exists, check_version
 
 class context (object):
     def __init__(self, path):
@@ -35,6 +35,8 @@ class context (object):
             if hasattr(e, 'problem_mark'):
                 err_str += " ({:s}:{:s})".format(e.problem_mark.line+1, e.problem_mark.column+1)
             raise skerror("Failed parsing sourceknight.yaml: {:s}".format(err_str))
+
+        check_version(self._defs)
 
         # load or create state
         try:

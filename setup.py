@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="sourceknight",
-    version="0.0.2",
+    version="0.1",
     author="travis mick",
     author_email="root@lo.calho.st",
     description="simple dependency manager for sourcemod projects",

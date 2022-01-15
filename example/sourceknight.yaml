@@ -1,4 +1,5 @@
 project:
+  sourceknight: 0.1
   name: myplugin-example
   dependencies:
     - name: sourcemod
