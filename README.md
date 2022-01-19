@@ -12,7 +12,7 @@ Right now, `sourceknight` is essentially a proof of concept -- it is only capabl
 
 You can now install `sourceknight` from pypi: `pip install sourceknight`.
 
-Alternatively, compile and instal from source: `pip install .`.
+Alternatively, compile and install from source: `pip install .`.
 
 ## Defining a project
 
