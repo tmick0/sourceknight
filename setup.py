@@ -1,4 +1,5 @@
 from setuptools import setup
+from pathlib import Path
 
 setup(
     name="sourceknight",
@@ -6,7 +7,7 @@ setup(
     author="travis mick",
     author_email="root@lo.calho.st",
     description="simple dependency manager for sourcemod projects",
-    long_description="file:README.md",
+    long_description=(Path(__file__).parent / "README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/tmick0/sourceknight",
     packages=['sourceknight', 'sourceknight.drivers'],
