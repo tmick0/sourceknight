@@ -8,7 +8,6 @@ import mimetypes
 import logging
 import shutil
 import logging
-import semver
 
 from importlib.metadata import version
 from urllib.request import url2pathname

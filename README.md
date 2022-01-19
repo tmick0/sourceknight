@@ -31,6 +31,7 @@ A minimal `sourceknight.yaml` might look something like this:
 ```yaml
 project:
   name: myplugin-example
+  sourceknight: 0.1
   dependencies:
     - name: sourcemod
       type: tar
@@ -51,6 +52,8 @@ Details about the individual sections of the project file follow.
 ### Metadata
 
 The `name` key specifies the name of your project. (Technically, it isn't even required to be specified right now, but that might change.)
+
+The `sourceknight` key specifies the version of sourceknight this package was designed for. This allows users to be warned if they need to update.
 
 ### Dependencies
 
