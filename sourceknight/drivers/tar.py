@@ -27,7 +27,26 @@ class tardriver (basedriver):
         with filemgr(self._ctx, uuid.uuid4().hex, True) as tmp:
             with tarfile.open(os.path.join(self._ctx._path, self._model.params['location'])) as tar:
                 logging.info(" Unpacking archive...")
-                tar.extractall(tmp._path)
+                def is_within_directory(directory, target):
+                    
+                    abs_directory = os.path.abspath(directory)
+                    abs_target = os.path.abspath(target)
+                
+                    prefix = os.path.commonprefix([abs_directory, abs_target])
+                    
+                    return prefix == abs_directory
+                
+                def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+                
+                    for member in tar.getmembers():
+                        member_path = os.path.join(path, member.name)
+                        if not is_within_directory(path, member_path):
+                            raise Exception("Attempted Path Traversal in Tar File")
+                
+                    tar.extractall(path, members, numeric_owner=numeric_owner) 
+                    
+                
+                safe_extract(tar, tmp._path)
             for l in locations:
                 if l['source'][0] == '/':
                     l['source'] = l['source'][1:]
