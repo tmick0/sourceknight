@@ -1,5 +1,5 @@
 project:
-  sourceknight: 0.1
+  sourceknight: 0.2
   name: myplugin-example
   dependencies:
     - name: sourcemod

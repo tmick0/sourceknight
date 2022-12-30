@@ -29,7 +29,7 @@ A minimal `sourceknight.yaml` might look something like this:
 ```yaml
 project:
   name: myplugin-example
-  sourceknight: 0.1
+  sourceknight: 0.2
   dependencies:
     - name: sourcemod
       type: tar
