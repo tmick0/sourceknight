@@ -3,7 +3,7 @@ from pathlib import Path
 
 setup(
     name="sourceknight",
-    version="0.2",
+    version="0.3",
     author="travis mick",
     author_email="root@lo.calho.st",
     description="simple dependency manager for sourcemod projects",
