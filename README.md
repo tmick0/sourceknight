@@ -22,7 +22,7 @@ A *project directory* will include a *project file* called `sourceknight.yaml` t
 its dependencies, and the plugins it will build. The project file is written in [YAML](https://en.wikipedia.org/wiki/YAML).
 
 If building your own plugin, your project directory will likely also include any sourcepawn files you need, but this is optional --
-you can also also use `sourcepawn` just to simplify compiling a collection of third party plugins by declaring them as dependencies.
+you can also also use `sourceknight` just to simplify compiling a collection of third party plugins by declaring them as dependencies.
 
 A minimal `sourceknight.yaml` might look something like this:
 
