@@ -69,6 +69,7 @@ Depending on the `type`, different additional fields may be required. Right now,
 **`git`:**
 
 - `repo`: Git repository URL to clone
+- Optional: `version`, a commit tag or branch to checkout instead of the default
 
 Both of these types of dependencies must have an `unpack` block, which tells us which files to copy out of them and where they belong relative to the `sourceknight` *build root*. The build root is a hidden directory maintained by `sourceknight` which will contain the entire sourcemod tree (i.e., it will contain the `addons` directory) as well as any other dependencies and sources specified by your project.
 
