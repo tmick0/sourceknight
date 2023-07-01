@@ -26,9 +26,11 @@ class gitdriver (basedriver):
             logging.info(' Cloning from {:s}'.format(self._model.params['repo']))
             repo = git.Repo.clone_from(self._model.params['repo'], loc)
 
-        # TODO: handle branches, tags, etc
         if self._model.version is None:
             self._model.version = repo.head.commit.hexsha
+        else:
+            repo.git.checkout(self._model.version)
+
         self._ctx._state.update(dependencies={
             self._model.name: self._model.state(location=os.path.relpath(loc, self._ctx._path), driver='git')
         })
