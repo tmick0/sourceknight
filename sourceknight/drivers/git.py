@@ -18,18 +18,24 @@ class gitdriver (basedriver):
     def update(self, mgr):
         loc = os.path.join(self._ctx._path, '.sourceknight', 'cache', self._model.name)
         
+        fetched = False
         if os.path.isdir(loc):
             repo = git.Repo(loc)
-            logging.info(' Pulling from {:s}'.format(repo.remote().url))
-            repo.remote().pull()
         else:
             logging.info(' Cloning from {:s}'.format(self._model.params['repo']))
             repo = git.Repo.clone_from(self._model.params['repo'], loc)
+            fetched = True
 
         if self._model.version is None:
+            if not fetched:
+                logging.info(' Pulling from {:s}'.format(repo.remote().url))
+                repo.remote().pull()
             self._model.version = repo.head.commit.hexsha
         else:
-            repo.git.checkout(self._model.version)
+            if not fetched:
+                logging.info(' Fetching from {:s}'.format(repo.remote().url))
+                repo.remote().fetch()
+            repo.head.reset(self._model.version, working_tree=True)
 
         self._ctx._state.update(dependencies={
             self._model.name: self._model.state(location=os.path.relpath(loc, self._ctx._path), driver='git')
