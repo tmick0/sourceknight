@@ -1,3 +1,24 @@
 [build-system]
 requires = ["setuptools>=44", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "sourceknight"
+version = "0.3"
+description = "simple dependency manager for sourcemod projects"
+readme = "README.md"
+authors = [
+    {name = "travis mick", email = "root@lo.calho.st"},
+]
+requires-python = ">=3.8"
+dependencies = [
+    "GitPython~=3.1.32",
+    "pyyaml~=6.0.1",
+    "requests~=2.31.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/tmick0/sourceknight"
+
+[project.scripts]
+sourceknight = "sourceknight.main:main"
