@@ -37,21 +37,21 @@ class compile (object):
             raise skerror("One or more of specified targets not defined: {}".format(', '.join(targets)))
 
         try:
-            workdir = self._ctx.defs['project']['workdir']
+            workdir = self._ctx.defs['workdir']
         except KeyError:
             workdir = self._default_workdir
         if workdir[0] == '/':
             workdir = workdir[1:]
 
         try:
-            compiler = self._ctx.defs['project']['compiler']
+            compiler = self._ctx.defs['compiler']
         except KeyError:
             compiler = self._default_compiler
         if compiler[0] == '/':
             compiler = compiler[1:]
 
         try:
-            root = self._ctx.defs['project']['root']
+            root = self._ctx.defs['root']
             if root[0] == '/':
                 root = root[1:]
         except KeyError:
@@ -61,7 +61,7 @@ class compile (object):
         if output is None:
             output = '.'
             try:
-                output = self._ctx.defs['project']['output']
+                output = self._ctx.defs['output']
                 if output[0] == '/':
                     output = output[1:]
             except KeyError:

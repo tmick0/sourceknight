@@ -166,3 +166,56 @@ def check_version(defs):
     if compat.newer:
         logging.error("This manifest requires a newer version of sourceknight than is currently installed ({} vs {})".format(ver, cur))
         raise err
+
+
+def extract_and_copy(drvcls, locations, mgr, tmp):
+    from sourceknight.drivers import gitdriver
+    for l in locations:
+        if l['source'][0] == '/':
+            l['source'] = l['source'][1:]
+        if l['dest'][0] == '/':
+            l['dest'] = l['dest'][1:]
+
+        src = os.path.normpath(os.path.join(tmp.path, str(l['source'])))
+        dst = os.path.normpath(os.path.join(mgr.path, str(l['dest'])))
+
+        if isinstance(drvcls, gitdriver):
+            src = os.path.normpath(os.path.join(str(drvcls.model.params['location']), l['source']))
+
+        logging.info("Extracting {} to {}".format(src, dst))
+
+        if not os.path.exists(src):
+            logging.error("Source path does not exist: {}".format(src))
+            continue
+
+        if os.path.isdir(src):
+            ensure_path_exists(dst)
+        else:
+            ensure_path_exists(os.path.dirname(dst))
+
+        try:
+            shutil.copytree(src, dst, dirs_exist_ok=True)
+        except Exception as e:
+            logging.error("Error copying from {} to {}: {}".format(src, dst, e))
+
+    drvcls.ctx.state.update(build={
+        drvcls.model.name: drvcls.model.state(driver=drvcls.model.type)
+    })
+
+
+def tar_is_within_directory(directory, target):
+    abs_directory = os.path.abspath(directory)
+    abs_target = os.path.abspath(target)
+
+    prefix = os.path.commonprefix([abs_directory, abs_target])
+
+    return prefix == abs_directory
+
+
+def tar_safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+    for member in tar.getmembers():
+        member_path = os.path.join(path, member.name)
+        if not tar_is_within_directory(path, member_path):
+            raise Exception("Attempted Path Traversal in Tar File")
+
+    tar.extractall(path, members, numeric_owner=numeric_owner)
