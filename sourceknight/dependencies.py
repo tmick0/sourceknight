@@ -1,5 +1,4 @@
-
-from .drivers import tardriver, gitdriver, filedriver
+from sourceknight.drivers import tardriver, gitdriver, filedriver, zipdriver
 import logging
 
 class dependency (object):
@@ -32,7 +31,8 @@ class dependency (object):
 drivers_by_name = {
     'tar': tardriver,
     'git': gitdriver,
-    'file': filedriver
+    'file': filedriver,
+    'zip': zipdriver
 }
 
 
@@ -44,7 +44,7 @@ class depmgr (object):
         d = dependency.from_yaml(dep)
         current_model = None
         try:
-            current_model = dependency.from_yaml(self._ctx._state.build[d.name])
+            current_model = dependency.from_yaml(self._ctx.state.build[d.name])
         except KeyError:
             pass
 
@@ -57,7 +57,7 @@ class depmgr (object):
             unpack = True
         elif d.version != current_model.version:
             unpack = True
-        
+
         if unpack:
             logging.info("Unpacking {:s}...".format(d.name))
             drivers_by_name[d.params['driver']](self._ctx, d).unpack(fmgr, locations)
@@ -68,7 +68,7 @@ class depmgr (object):
         new_model = dependency.from_yaml(dep)
         current_model = None
         try:
-            current_model = dependency.from_yaml(self._ctx._state.dependencies[new_model.name])
+            current_model = dependency.from_yaml(self._ctx.state.dependencies[new_model.name])
         except KeyError:
             pass
 

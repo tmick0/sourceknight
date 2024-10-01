@@ -16,13 +16,13 @@ class status (object):
         parser.add_argument('-v,--verbose', dest='verbose', action='store_true', help="Print additional information")
 
     def __call__(self, args):
-        for dep in map(dependency.from_yaml, self._ctx._defs['project']['dependencies']):
+        for dep in map(dependency.from_yaml, self._ctx.defs['project']['dependencies']):
             cache = dependency()
             build = dependency()
-            if dep.name in self._ctx._state.dependencies:
-                cache = dependency.from_yaml(self._ctx._state.dependencies[dep.name])
-            if dep.name in self._ctx._state.build:
-                build = dependency.from_yaml(self._ctx._state.build[dep.name])
+            if dep.name in self._ctx.state.dependencies:
+                cache = dependency.from_yaml(self._ctx.state.dependencies[dep.name])
+            if dep.name in self._ctx.state.build:
+                build = dependency.from_yaml(self._ctx.state.build[dep.name])
             logging.info(dep.name)
             if cache.version is not None:
                 logging.info(" Cached version: {:s}".format(cache.version))

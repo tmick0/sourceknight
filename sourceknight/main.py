@@ -2,19 +2,15 @@ import argparse
 import sys
 import logging
 
-from .context import context
-from .update import update
-from .status import status
-from .unpack import unpack
-from .compile import compile
-from .build import build
-from .errors import skerror
+from sourceknight import update, status, unpack, build, compile, skerror, context
 
 def main():
     logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     parser = argparse.ArgumentParser("sourceknight", description="simple dependency manager for sourcemod projects")
-    parser.add_argument('-p,--path', dest="path", help="Path to the root of your project (directory containing sourceknight.yaml) - defaults to current directory", default=".")
+    parser.add_argument('-p,--path', dest="path",
+                        help="Path to the root of your project (directory containing sourceknight.yaml) - defaults to current directory",
+                        default=".")
 
     subparsers = parser.add_subparsers(dest='command')
     subparsers.required = True
@@ -38,7 +34,7 @@ def main():
     try:
         try:
             command = command_map[args.command]
-        except KeyError as e:
+        except KeyError:
             raise skerror("Unknown command {:s}".format(args.command))
         with context(args.path) as ctx:
             command(ctx)(args)
@@ -47,4 +43,3 @@ def main():
         sys.exit(1)
 
     sys.exit(0)
-

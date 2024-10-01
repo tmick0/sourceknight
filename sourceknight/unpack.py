@@ -1,9 +1,9 @@
-
-from .dependencies import depmgr
-from .utils import filemgr
 import os
 import shutil
 import logging
+
+from .utils import filemgr
+from .dependencies import depmgr
 
 class unpack (object):
     def __init__(self, context):
@@ -22,10 +22,10 @@ class unpack (object):
         self._ctx.ensure_working_directory_exists()
 
         if args.clean:
-            d = os.path.join(self._ctx._path, '.sourceknight', 'build')
+            d = os.path.join(self._ctx.path, '.sourceknight', 'build')
             logging.info("Deleting existing build directory ({:s})...".format(d))
-            for k in list(self._ctx._state.build):
-                del self._ctx._state.build[k]
+            for k in list(self._ctx.state.build):
+                del self._ctx.state.build[k]
             try:
                 shutil.rmtree(d)
             except FileNotFoundError:
@@ -34,8 +34,8 @@ class unpack (object):
         dmgr = depmgr(self._ctx)
         with filemgr(self._ctx, "build", True) as fmgr:
             try:
-                for dep in self._ctx._defs['project']['dependencies']:
-                    dmgr.unpack(self._ctx._state.dependencies[dep['name']], dep['unpack'], fmgr, args.force)
+                for dep in self._ctx.defs['dependencies']:
+                    dmgr.unpack(self._ctx.state.dependencies[dep['name']], dep['unpack'], fmgr, args.force)
                 fmgr.release_dir()
             except:
                 logging.info("Error occurred during unpack, removing build tree...")

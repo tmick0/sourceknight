@@ -1,31 +1,29 @@
-from .base import basedriver
-from ..utils import filemgr, ensure_path_exists
-
 import logging
 import os
 import tarfile
 import uuid
-import shutil
+
+from .base import basedriver
+from ..utils import filemgr, tar_safe_extract, extract_and_copy
 
 
-class tardriver (basedriver):
+class tardriver(basedriver):
     def __init__(self, ctx, model):
-        self._ctx = ctx
-        self._model = model
+        super().__init__(ctx, model)
 
     def cleanup(self):
-        os.unlink(os.path.join(self._ctx._path, self._model.params['location']))
+        os.unlink(os.path.join(self.ctx.path, self.model.params['location']))
 
     def update(self, mgr):
-        path = mgr.acquire(self._model.params['location'])
+        path = mgr.acquire(self.model.params['location'])
         mgr.release(path)
-        self._ctx._state.update(dependencies={
-            self._model.name: self._model.state(location=os.path.relpath(path, self._ctx._path), driver='tar')
+        self.ctx.state.update(dependencies={
+            self.model.name: self.model.state(location=os.path.relpath(path, self.ctx.path), driver='tar')
         })
 
     def unpack(self, mgr, locations):
-        with filemgr(self._ctx, uuid.uuid4().hex, True) as tmp:
-            with tarfile.open(os.path.join(self._ctx._path, self._model.params['location'])) as tar:
+        with filemgr(self.ctx, uuid.uuid4().hex, True) as tmp:
+            with tarfile.open(os.path.join(self.ctx.path, self.model.params['location'])) as tar:
                 logging.info(" Unpacking archive...")
                 def is_within_directory(directory, target):
                     

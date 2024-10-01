@@ -1,13 +1,11 @@
-from re import L
-import requests
-import urllib
+import logging
+import mimetypes
 import os
 import pathlib
-import uuid
-import mimetypes
-import logging
 import shutil
-import logging
+import urllib
+import requests
+import uuid
 
 from importlib.metadata import version
 from urllib.request import url2pathname
@@ -66,12 +64,12 @@ class filemgr (object):
         self._sess = requests.session()
         self._sess.mount("file://", LocalFileAdapter)
         self._tmpfiles = []
-        self._path = os.path.join(self._ctx._path, '.sourceknight', directory)
+        self.path = str(os.path.join(self._ctx.path, '.sourceknight', directory))
         self._entire_dir = entire_directory
         mimetypes.init()
 
     def __enter__(self):
-        ensure_path_exists(self._path)
+        ensure_path_exists(self.path)
         return self
 
     def __exit__(self, *exc):
@@ -81,7 +79,7 @@ class filemgr (object):
             except OSError:
                 pass
         if self._entire_dir:
-            shutil.rmtree(self._path)
+            shutil.rmtree(self.path)
 
     def release_dir(self):
         self._entire_dir = False
@@ -99,7 +97,7 @@ class filemgr (object):
         if ext is None:
             ext = os.path.splitext(urllib.parse.urlparse(url).path)[1]
 
-        tmp = os.path.join(self._path, '{}{}'.format(uuid.uuid4().hex, ext))
+        tmp = os.path.join(self.path, '{}{}'.format(uuid.uuid4().hex, ext))
         self._tmpfiles.append(tmp)
 
         with open(tmp, 'wb') as fh:
@@ -119,13 +117,13 @@ class cd (object):
 
 
 def once(fn):
-    fn._already_run = False
-    fn._last_res = None
+    fn.already_run = False
+    fn.last_res = None
     def wrapped(*args, **kwargs):
-        if fn._already_run:
-            return fn._last_res
+        if fn.already_run:
+            return fn.last_res
         fn._last_res = fn(*args, **kwargs)
-        return fn._last_res
+        return fn.last_res
     return wrapped
 
 
