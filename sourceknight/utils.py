@@ -190,11 +190,15 @@ def extract_and_copy(drvcls, locations, mgr, tmp):
 
         if os.path.isdir(src):
             ensure_path_exists(dst)
+            copy_func = shutil.copytree
+            copy_args = {'dirs_exist_ok': True}
         else:
             ensure_path_exists(os.path.dirname(dst))
+            copy_func = shutil.copy
+            copy_args = {}
 
         try:
-            shutil.copytree(src, dst, dirs_exist_ok=True)
+            copy_func(src, dst, **copy_args)
         except Exception as e:
             logging.error("Error copying from {} to {}: {}".format(src, dst, e))
 
