@@ -1,4 +1,5 @@
 from sourceknight.drivers import tardriver, gitdriver, filedriver, zipdriver
+from .utils import adjust_sourcemod_platform
 import logging
 
 class dependency (object):
@@ -71,6 +72,9 @@ class depmgr (object):
             current_model = dependency.from_yaml(self._ctx.state.dependencies[new_model.name])
         except KeyError:
             pass
+
+        # adjust sourcemod base on sourceknight running platform
+        new_model = adjust_sourcemod_platform(new_model)
 
         driver = drivers_by_name[new_model.type](self._ctx, new_model)
 

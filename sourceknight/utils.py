@@ -2,6 +2,7 @@ import logging
 import mimetypes
 import os
 import pathlib
+import platform
 import shutil
 import urllib
 import requests
@@ -223,3 +224,14 @@ def tar_safe_extract(tar, path=".", members=None, *, numeric_owner=False):
             raise Exception("Attempted Path Traversal in Tar File")
 
     tar.extractall(path, members, numeric_owner=numeric_owner)
+
+def adjust_sourcemod_platform(model):
+    if str(model.name).lower() == "sourcemod":
+        if platform.system() == "Windows":
+            model.type = "zip"
+            model.params['location'] = str(model.params['location']).replace("linux.tar.gz", "windows.zip")
+        elif platform.system() == "Linux":
+            model.type = "tar"
+            model.params['location'] = str(model.params['location']).replace("windows.zip", "linux.tar.gz")
+
+    return model
