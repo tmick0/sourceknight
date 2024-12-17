@@ -15,7 +15,7 @@ class gitdriver (basedriver):
 
     def update(self, mgr):
         loc = str(os.path.join(self.ctx.path, '.sourceknight', 'cache', self.model.name))
-        
+
         fetched = False
         if os.path.isdir(loc):
             repo = git.Repo(loc)
@@ -24,20 +24,23 @@ class gitdriver (basedriver):
             repo = git.Repo.clone_from(self.model.params['repo'], loc)
             fetched = True
 
-        if self.model.version is None:
-            if not fetched:
-                logging.info(' Pulling from {:s}'.format(repo.remote().url))
-                repo.remote().pull()
-            self.model.version = repo.head.commit.hexsha
-        else:
-            if not fetched:
-                logging.info(' Fetching from {:s}'.format(repo.remote().url))
-                repo.remote().fetch()
-            repo.head.reset(self.model.version, working_tree=True)
+        try:
+            if self.model.version is None:
+                if not fetched:
+                    logging.info(' Pulling from {:s}'.format(repo.remote().url))
+                    repo.remote().pull()
+                self.model.version = repo.head.commit.hexsha
+            else:
+                if not fetched:
+                    logging.info(' Fetching from {:s}'.format(repo.remote().url))
+                    repo.remote().fetch()
+                repo.head.reset(self.model.version, working_tree=True)
 
-        self.ctx.state.update(dependencies={
-            self.model.name: self.model.state(location=os.path.relpath(loc, self.ctx.path), driver=self.model.type)
-        })
+            self.ctx.state.update(dependencies={
+                self.model.name: self.model.state(location=os.path.relpath(loc, self.ctx.path), driver=self.model.type)
+            })
+        finally:
+            repo.close()
 
     def unpack(self, mgr, locations):
         with filemgr(self.ctx, 'cache') as tmp:
