@@ -16,7 +16,7 @@ class status (object):
         parser.add_argument('-v,--verbose', dest='verbose', action='store_true', help="Print additional information")
 
     def __call__(self, args):
-        for dep in map(dependency.from_yaml, self._ctx.defs['project']['dependencies']):
+        for dep in map(dependency.from_yaml, self._ctx.defs['dependencies']):
             cache = dependency()
             build = dependency()
             if dep.name in self._ctx.state.dependencies:
