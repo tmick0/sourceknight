@@ -153,7 +153,7 @@ class skversion (object):
 @once
 def check_version(defs):
     try:
-        ver = defs['project']['sourceknight']
+        ver = defs['sourceknight']
     except KeyError:
         logging.warning("No version detected in manifest, defaulting to 0.1. In the future, a version will be required in the manifest.")
         ver = "0.1"
