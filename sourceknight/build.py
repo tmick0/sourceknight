@@ -5,8 +5,8 @@ from .compile import compile
 import logging
 
 class build (object):
-    def __init__(self, context):
-        self._ctx = context
+    def __init__(self, ctx):
+        self._ctx = ctx
         self._update = update
         self._unpack = unpack
         self._compile = compile
@@ -23,9 +23,9 @@ class build (object):
 
     def __call__(self, args):
         logging.info("Updating...")
-        update(self._ctx)(args)
+        self._update(self._ctx)(args)
         logging.info("Unpacking...")
-        unpack(self._ctx)(args)
+        self._unpack(self._ctx)(args)
         logging.info("Compiling...")
-        compile(self._ctx)(args)
+        self._compile(self._ctx)(args)
         logging.info("Done")

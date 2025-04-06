@@ -18,5 +18,5 @@ class update (object):
         self._ctx.ensure_working_directory_exists()
         dmgr = depmgr(self._ctx)
         with filemgr(self._ctx, "cache") as fmgr:
-            for dep in self._ctx._defs['project']['dependencies']:
+            for dep in self._ctx.defs['dependencies']:
                 dmgr.update(dep, fmgr, args.force)

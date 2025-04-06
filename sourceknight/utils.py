@@ -1,13 +1,12 @@
-from re import L
-import requests
-import urllib
+import logging
+import mimetypes
 import os
 import pathlib
-import uuid
-import mimetypes
-import logging
+import platform
 import shutil
-import logging
+import urllib
+import requests
+import uuid
 
 from importlib.metadata import version
 from urllib.request import url2pathname
@@ -66,12 +65,12 @@ class filemgr (object):
         self._sess = requests.session()
         self._sess.mount("file://", LocalFileAdapter)
         self._tmpfiles = []
-        self._path = os.path.join(self._ctx._path, '.sourceknight', directory)
+        self.path = str(os.path.join(self._ctx.path, '.sourceknight', directory))
         self._entire_dir = entire_directory
         mimetypes.init()
 
     def __enter__(self):
-        ensure_path_exists(self._path)
+        ensure_path_exists(self.path)
         return self
 
     def __exit__(self, *exc):
@@ -81,7 +80,7 @@ class filemgr (object):
             except OSError:
                 pass
         if self._entire_dir:
-            shutil.rmtree(self._path)
+            shutil.rmtree(self.path)
 
     def release_dir(self):
         self._entire_dir = False
@@ -99,7 +98,7 @@ class filemgr (object):
         if ext is None:
             ext = os.path.splitext(urllib.parse.urlparse(url).path)[1]
 
-        tmp = os.path.join(self._path, '{}{}'.format(uuid.uuid4().hex, ext))
+        tmp = os.path.join(self.path, '{}{}'.format(uuid.uuid4().hex, ext))
         self._tmpfiles.append(tmp)
 
         with open(tmp, 'wb') as fh:
@@ -119,13 +118,13 @@ class cd (object):
 
 
 def once(fn):
-    fn._already_run = False
-    fn._last_res = None
+    fn.already_run = False
+    fn.last_res = None
     def wrapped(*args, **kwargs):
-        if fn._already_run:
-            return fn._last_res
+        if fn.already_run:
+            return fn.last_res
         fn._last_res = fn(*args, **kwargs)
-        return fn._last_res
+        return fn.last_res
     return wrapped
 
 
@@ -154,7 +153,7 @@ class skversion (object):
 @once
 def check_version(defs):
     try:
-        ver = defs['project']['sourceknight']
+        ver = defs['sourceknight']
     except KeyError:
         logging.warning("No version detected in manifest, defaulting to 0.1. In the future, a version will be required in the manifest.")
         ver = "0.1"
@@ -168,3 +167,71 @@ def check_version(defs):
     if compat.newer:
         logging.error("This manifest requires a newer version of sourceknight than is currently installed ({} vs {})".format(ver, cur))
         raise err
+
+
+def extract_and_copy(drvcls, locations, mgr, tmp):
+    from sourceknight.drivers import gitdriver
+    for l in locations:
+        if l['source'][0] == '/':
+            l['source'] = l['source'][1:]
+        if l['dest'][0] == '/':
+            l['dest'] = l['dest'][1:]
+
+        src = os.path.normpath(os.path.join(tmp.path, str(l['source'])))
+        dst = os.path.normpath(os.path.join(mgr.path, str(l['dest'])))
+
+        if isinstance(drvcls, gitdriver):
+            src = os.path.normpath(os.path.join(str(drvcls.model.params['location']), l['source']))
+
+        logging.info("Extracting {} to {}".format(src, dst))
+
+        if not os.path.exists(src):
+            logging.error("Source path does not exist: {}".format(src))
+            continue
+
+        if os.path.isdir(src):
+            ensure_path_exists(dst)
+            copy_func = shutil.copytree
+            copy_args = {'dirs_exist_ok': True}
+        else:
+            ensure_path_exists(os.path.dirname(dst))
+            copy_func = shutil.copy
+            copy_args = {}
+
+        try:
+            copy_func(src, dst, **copy_args)
+        except Exception as e:
+            logging.error("Error copying from {} to {}: {}".format(src, dst, e))
+
+    drvcls.ctx.state.update(build={
+        drvcls.model.name: drvcls.model.state(driver=drvcls.model.type)
+    })
+
+
+def tar_is_within_directory(directory, target):
+    abs_directory = os.path.abspath(directory)
+    abs_target = os.path.abspath(target)
+
+    prefix = os.path.commonprefix([abs_directory, abs_target])
+
+    return prefix == abs_directory
+
+
+def tar_safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+    for member in tar.getmembers():
+        member_path = os.path.join(path, member.name)
+        if not tar_is_within_directory(path, member_path):
+            raise Exception("Attempted Path Traversal in Tar File")
+
+    tar.extractall(path, members, numeric_owner=numeric_owner)
+
+def adjust_sourcemod_platform(model):
+    if str(model.name).lower() == "sourcemod":
+        if platform.system() == "Windows":
+            model.type = "zip"
+            model.params['location'] = str(model.params['location']).replace("linux.tar.gz", "windows.zip")
+        elif platform.system() == "Linux":
+            model.type = "tar"
+            model.params['location'] = str(model.params['location']).replace("windows.zip", "linux.tar.gz")
+
+    return model

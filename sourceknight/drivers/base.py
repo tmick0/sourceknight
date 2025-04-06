@@ -1,15 +1,15 @@
 
 class basedriver (object):
     def __init__(self, ctx, model):
-        self._ctx = ctx
-        self._model = model
+        self.ctx = ctx
+        self.model = model
 
     def check_update(self, current):
         if current is None:
             return True
         if current.version is None:
             return True
-        if current.version != self._model.version:
+        if current.version != self.model.version:
             return True
         return False
 

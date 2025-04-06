@@ -1,12 +1,11 @@
-
-from .dependencies import depmgr
-from .utils import filemgr, cd, ensure_path_exists
-from .errors import skerror
+import logging
 import os
+import platform
 import shutil
 import subprocess
-import logging
-import platform
+
+from .errors import skerror
+from .utils import cd, ensure_path_exists
 
 class compile (object):
     if platform.architecture()[0] == '64bit':
@@ -30,7 +29,7 @@ class compile (object):
     def __call__(self, args):
         self._ctx.ensure_working_directory_exists()
 
-        all_targets = self._ctx._defs['project']['targets']
+        all_targets = self._ctx.defs['targets']
         targets = args.targets
         if not len(targets):
             targets = all_targets
@@ -38,21 +37,21 @@ class compile (object):
             raise skerror("One or more of specified targets not defined: {}".format(', '.join(targets)))
 
         try:
-            workdir = self._ctx._defs['project']['workdir']
+            workdir = self._ctx.defs['workdir']
         except KeyError:
             workdir = self._default_workdir
         if workdir[0] == '/':
             workdir = workdir[1:]
 
         try:
-            compiler = self._ctx._defs['project']['compiler']
+            compiler = self._ctx.defs['compiler']
         except KeyError:
             compiler = self._default_compiler
         if compiler[0] == '/':
             compiler = compiler[1:]
 
         try:
-            root = self._ctx._defs['project']['root']
+            root = self._ctx.defs['root']
             if root[0] == '/':
                 root = root[1:]
         except KeyError:
@@ -62,13 +61,13 @@ class compile (object):
         if output is None:
             output = '.'
             try:
-                output = self._ctx._defs['project']['output']
+                output = self._ctx.defs['output']
                 if output[0] == '/':
                     output = output[1:]
             except KeyError:
                 pass
 
-        buildroot = os.path.join(self._ctx._path, '.sourceknight', 'build')
+        buildroot = os.path.join(self._ctx.path, '.sourceknight', 'build')
         workdir = os.path.join(buildroot, workdir)
         compiler = os.path.abspath(os.path.join(buildroot, compiler))
         outdir = os.path.relpath(os.path.abspath(output), workdir)
@@ -77,7 +76,7 @@ class compile (object):
             logging.info("Copying sources...")
             def copy_filter(directory, contents):
                 return list(filter(lambda c: c[0] == '.', contents))
-            shutil.copytree(os.path.join(self._ctx._path, root), buildroot, dirs_exist_ok=True, ignore=copy_filter)
+            shutil.copytree(str(os.path.join(self._ctx.path, root)), buildroot, dirs_exist_ok=True, ignore=copy_filter)
 
         with cd(workdir):
             ensure_path_exists(outdir)

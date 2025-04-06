@@ -1,9 +1,7 @@
 
 class state (object):
     def __init__(self):
-        self._dict = {}
-        self._dict['dependencies'] = {}
-        self._dict['build'] = {}
+        self._dict = {'dependencies': {}, 'build': {}}
         self._clean = True
     
     def clean(self):
